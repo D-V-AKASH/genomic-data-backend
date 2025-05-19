@@ -7,25 +7,31 @@ function HasAccess({ signer }) {
   const [viewerAddress, setViewerAddress] = useState("");
   const [accessStatus, setAccessStatus] = useState("");
 
-  const checkAccess = async (e) => {
-    e.preventDefault();
-    if (!signer) {
-      setAccessStatus("Connect wallet first");
-      return;
-    }
-    try {
-      setAccessStatus("Checking access...");
-      const contractAddress = "0xc0929b5ba5aae644d42e567003a287693f795e1d"; // ✅ Already correct
-      const abi = [
-        "function hasAccess(address _user, address _viewer) public view returns (bool)"
-      ];
-      const contract = new ethers.Contract(contractAddress, abi, signer);
-      const hasAccess = await contract.hasAccess(userAddress, viewerAddress);
-      setAccessStatus(hasAccess ? "Access granted" : "Access denied");
-    } catch (error) {
-      setAccessStatus("Error: " + error.message);
-    }
-  };
+ const checkAccess = async (e) => {
+  e.preventDefault();
+  if (!signer) {
+    setAccessStatus("Connect wallet first");
+    return;
+  }
+  try {
+    setAccessStatus("Checking access...");
+    const contractAddress = "0xc0929b5ba5aae644d42e567003a287693f795e1d";
+    const abi = [
+      "function hasAccess(address _user, address _viewer) public view returns (bool)"
+    ];
+    const contract = new ethers.Contract(contractAddress, abi, signer);
+
+    // ✅ Trim both addresses before using
+    const cleanedUserAddress = userAddress.trim();
+    const cleanedViewerAddress = viewerAddress.trim();
+
+    const hasAccess = await contract.hasAccess(cleanedUserAddress, cleanedViewerAddress);
+    setAccessStatus(hasAccess ? "Access granted" : "Access denied");
+  } catch (error) {
+    setAccessStatus("Error: " + error.message);
+  }
+};
+
 
   return (
     <div className="component-container">

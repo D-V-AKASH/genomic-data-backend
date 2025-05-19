@@ -22,7 +22,7 @@ function GetCID({ signer }) {
         "function getCID(address _user) public view returns (string memory)"
       ];
       const contract = new ethers.Contract(contractAddress, abi, signer);
-      const fetchedCID = await contract.getCID(userAddress);
+      const fetchedCID = await contract.getCID(userAddress.trim());
 
       if (!fetchedCID || fetchedCID.trim() === "") {
         setErrorMsg("No CID found or access denied.");
@@ -30,7 +30,11 @@ function GetCID({ signer }) {
         setCid(fetchedCID);
       }
     } catch (error) {
-      if (
+      // Check for revert error with reason "Access denied"
+      if (error.reason === "Access denied") {
+        setErrorMsg("Access denied: You do not have permission to view this CID.");
+      }
+      else if (
         error.message.includes("resolver or addr is not configured for ENS name") ||
         error.code === "INVALID_ARGUMENT"
       ) {
