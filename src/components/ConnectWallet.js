@@ -16,9 +16,11 @@ const ConnectWallet = ({ setCurrentAccount }) => {
   };
 
   return (
-    <button onClick={connectWallet}>
-      Connect Wallet
-    </button>
+    <div className="connect-wallet">
+      <button onClick={connectWallet}>
+        Connect Wallet
+      </button>
+    </div>
   );
 };
 

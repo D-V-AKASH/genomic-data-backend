@@ -28,19 +28,19 @@ function RevokeAccess({ signer }) {
   };
 
   return (
-    <div>
+    <div className="component-container">
       <h3>Revoke Access</h3>
-      <form onSubmit={handleRevoke}>
+      <form onSubmit={handleRevoke} className="form-inline">
         <input
           type="text"
           placeholder="Enter address to revoke access"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
-          style={{ width: "300px" }}
+          className="input-field"
         />
         <button type="submit">Revoke Access</button>
       </form>
-      <p>{txStatus}</p>
+      <p className="status-text">{txStatus}</p>
     </div>
   );
 }

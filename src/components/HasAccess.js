@@ -1,3 +1,4 @@
+// src/components/HasAccess.js
 import React, { useState } from "react";
 import { ethers } from "ethers"; // ✅ This fixes the error
 
@@ -27,26 +28,26 @@ function HasAccess({ signer }) {
   };
 
   return (
-    <div>
+    <div className="component-container">
       <h3>Check Access</h3>
-      <form onSubmit={checkAccess}>
+      <form onSubmit={checkAccess} className="form-inline">
         <input
           type="text"
           placeholder="User Address"
           value={userAddress}
           onChange={(e) => setUserAddress(e.target.value)}
-          style={{ width: "300px", marginRight: "10px" }}
+          className="input-field"
         />
         <input
           type="text"
           placeholder="Viewer Address"
           value={viewerAddress}
           onChange={(e) => setViewerAddress(e.target.value)}
-          style={{ width: "300px" }}
+          className="input-field"
         />
         <button type="submit">Check</button>
       </form>
-      <p>{accessStatus}</p>
+      <p className="status-text">{accessStatus}</p>
     </div>
   );
 }

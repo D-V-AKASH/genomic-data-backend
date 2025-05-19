@@ -1,6 +1,6 @@
-// GrantAccess.js
+// src/components/GrantAccess.js
 import React, { useState } from "react";
-import { BrowserProvider } from "ethers"; // ✅ Ethers v6
+import { ethers } from "ethers";
 import { getContract } from "../utils/contract";
 
 const GrantAccess = () => {
@@ -16,8 +16,9 @@ const GrantAccess = () => {
         return;
       }
 
-      const provider = new BrowserProvider(window.ethereum); // ✅ v6
-      const signer = await provider.getSigner();
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner(); // ✅ FIXED: no await
+
       const contract = getContract(signer);
 
       setTxStatus("Sending transaction...");
@@ -33,17 +34,17 @@ const GrantAccess = () => {
   };
 
   return (
-    <div>
-      <h2>Grant Access</h2>
+    <div className="component-container">
+      <h3>Grant Access</h3>
       <input
         type="text"
         placeholder="Enter address to grant access"
         value={address}
         onChange={(e) => setAddress(e.target.value)}
-        style={{ width: "300px", marginRight: "10px" }}
+        className="input-field"
       />
       <button onClick={handleGrantAccess}>Grant Access</button>
-      <p>{txStatus}</p>
+      {txStatus && <p className="status-text">{txStatus}</p>}
     </div>
   );
 };
