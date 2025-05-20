@@ -1,23 +1,19 @@
 import React, { useState } from "react";
-import { ethers } from "ethers"; // ✅ Add this line
 
-function RevokeAccess({ signer }) {
+function RevokeAccess({ contract }) {
   const [address, setAddress] = useState("");
   const [txStatus, setTxStatus] = useState("");
 
   const handleRevoke = async (e) => {
     e.preventDefault();
-    if (!signer) {
+
+    if (!contract) {
       setTxStatus("Connect wallet first");
       return;
     }
+
     try {
       setTxStatus("Sending transaction...");
-      const contractAddress = "0xc0929b5ba5aae644d42e567003a287693f795e1d";
-      const abi = [
-        "function revokeAccess(address _user) public"
-      ];
-      const contract = new ethers.Contract(contractAddress, abi, signer);
       const tx = await contract.revokeAccess(address);
       await tx.wait();
       setTxStatus("Access revoked successfully!");

@@ -1,47 +1,65 @@
 import React, { useState } from "react";
-import { ethers } from "ethers";
-import { getContract } from "../utils/contract";
 
-const UploadCID = () => {
+function UploadCID({ contract }) {
   const [cid, setCid] = useState("");
+  const [aesKey, setAesKey] = useState("");
+  const [status, setStatus] = useState("");
 
-  const handleUpload = async () => {
-    if (!cid) return alert("Please enter a CID");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    if (!window.ethereum) {
-      alert("Please install MetaMask!");
+    if (!cid || !aesKey) {
+      alert("Please enter both CID and AES key");
+      return;
+    }
+    if (!contract) {
+      alert("Contract not initialized. Please connect your wallet.");
       return;
     }
 
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner(); // ✅ FIXED
-      const contract = getContract(signer);
+      setStatus("Submitting...");
 
-      const tx = await contract.storeCID(cid);
+      // Call contract method with strings, no conversion needed
+      const tx = await contract.storeCIDandKey(cid, aesKey);
       await tx.wait();
 
-      alert("CID uploaded successfully!");
+      setStatus("CID and AES key stored successfully!");
       setCid("");
+      setAesKey("");
     } catch (err) {
-      console.error("Error uploading CID:", err);
-      alert("Failed to upload CID");
+      console.error("Error uploading CID and key:", err);
+      setStatus("Error storing data");
     }
   };
 
   return (
-    <div className="component-container">
-      <h3>Upload CID</h3>
-      <input
-        type="text"
-        value={cid}
-        onChange={(e) => setCid(e.target.value)}
-        placeholder="Enter CID"
-        className="upload-input"
-      />
-      <button onClick={handleUpload}>Upload CID</button>
+    <div>
+      <h2>Upload CID and AES Key</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>CID:</label>
+          <input
+            type="text"
+            value={cid}
+            onChange={(e) => setCid(e.target.value)}
+            placeholder="Enter IPFS CID"
+          />
+        </div>
+        <div>
+          <label>AES Key:</label>
+          <input
+            type="text"
+            value={aesKey}
+            onChange={(e) => setAesKey(e.target.value)}
+            placeholder="Enter AES key"
+          />
+        </div>
+        <button type="submit">Store</button>
+      </form>
+      <p>{status}</p>
     </div>
   );
-};
+}
 
 export default UploadCID;
